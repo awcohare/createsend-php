@@ -3,8 +3,8 @@
 require_once dirname(__FILE__).'/services_json.php';
 
 class CS_REST_SerialiserFactory {
-    function get_available_serialiser($log) {
-        $log->log_message('Getting serialiser', get_class($this), CS_REST_LOG_VERBOSE);
+    static function get_available_serialiser($log) {
+        $log->log_message('Getting serialiser', get_class(), CS_REST_LOG_VERBOSE);
         if(@CS_REST_NativeJsonSerialiser::is_available()) {
             return new CS_REST_NativeJsonSerialiser($log);
         } else {
@@ -16,7 +16,7 @@ class CS_REST_SerialiserFactory {
      * Recursively ensures that all data values are utf-8 encoded. 
      * @param array $data All values of this array are checked for utf-8 encoding. 
      */
-    function check_encoding($data) {
+    static function check_encoding($data) {
         foreach($data as $k => $v) {
             // If the element is a sub-array then recusively encode the array
             if(is_array($v)) {
@@ -57,7 +57,7 @@ class CS_REST_NativeJsonSerialiser {
      * Tests if this serialisation scheme is available on the current server
      * @return boolean False if the server doesn't support the serialisation scheme
      */
-    function is_available() {
+    static function is_available() {
         return function_exists('json_decode') && function_exists('json_encode');
     }
 

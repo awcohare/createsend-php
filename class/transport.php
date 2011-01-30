@@ -7,13 +7,13 @@ define('CS_REST_DELETE', 'DELETE');
 define('CS_REST_SOCKET_TIMEOUT', 1);
 
 class CS_REST_TransportFactory {
-    function get_available_transport($requires_ssl, $log) { 
+    static function get_available_transport($requires_ssl, $log) { 
         if(@CS_REST_CurlTransport::is_available($requires_ssl)) {
             return new CS_REST_CurlTransport($log);
         } else if(@CS_REST_SocketTransport::is_available($requires_ssl)) {
             return new CS_REST_SocketTransport($log);
         } else { 
-            $log->log_message('No transport is available', CS_REST_LOG_ERROR);
+            $log->log_message('No transport is available', get_class(), CS_REST_LOG_ERROR);
             trigger_error('No transport is available.'.
                 ($requires_ssl ? ' Try using non-secure (http) mode or ' : ' Please ').
     			'ensure the cURL extension is loaded', E_USER_ERROR);
@@ -50,7 +50,7 @@ class CS_REST_CurlTransport {
      *
      * @return boolean False if this schema is unavailable on the server.
      */
-    function is_available($requires_ssl = false) {
+    static function is_available($requires_ssl = false) {
         return function_exists('curl_init') && function_exists('curl_exec');
     }
 
@@ -87,7 +87,7 @@ class CS_REST_CurlTransport {
 
         $response = curl_exec($ch);
         if(!$response && $response !== '') {
-            $this->_log->log_message('Error making request with curl_error: '.curl_errno($ch), CS_REST_LOG_ERROR);
+            $this->_log->log_message('Error making request with curl_error: '.curl_errno($ch), get_class(), CS_REST_LOG_ERROR);
             trigger_error('Error making request with curl_error: '.curl_error($ch), E_USER_ERROR);
         }
 
